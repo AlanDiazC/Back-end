@@ -14,6 +14,7 @@ const Playlists = mongoose.Schema({
   contenido: {
     type: String,
     required: true,
+    enum: ["Canciones", "Libros"],
   },
   listaCanciones: [
     {

@@ -3,15 +3,15 @@ const mongoose = require("mongoose");
 const Playlists = require("../models/playlistModel.js");
 
 exports.getPlaylists = async (req, res) => {
-  const playlist = await Playlists.find();
-  console.log(playlist);
-  res.json(playlist);
+  const playlist = await Playlists.find().catch((err) => res.json(err));
+  res.status(200).json(playlist);
 };
 
 exports.postVerPlaylists = async (req, res) => {
-  const playlist = await Playlists.find({ contenido: req.body.contenido });
-  console.log(playlist);
-  res.json(playlist);
+  const playlist = await Playlists.find({
+    contenido: req.body.contenido,
+  }).catch((err) => res.json(err));
+  res.status(200).json(playlist);
 };
 
 exports.postNuevaPlaylist = async (req, res) => {
@@ -19,10 +19,12 @@ exports.postNuevaPlaylist = async (req, res) => {
     nombre: req.body.nombre,
     contenido: req.body.contenido,
   });
-  playlist.save().then((playlistRes) => {
-    console.log("Playlist agregada");
-    res.json(playlistRes);
-  });
+  playlist
+    .save()
+    .then((playlistRes) => {
+      res.status(200).json(playlistRes);
+    })
+    .catch((err) => res.json(err));
 };
 
 exports.postAgregarCancion = async (req, res) => {
@@ -41,9 +43,10 @@ exports.postAgregarCancion = async (req, res) => {
           },
         },
       }
-    ).then(res.json({ estado: "cancion agregada" }));
+    )
+      .then(res.status(200).json({ estado: "cancion agregada" }))
+      .catch((err) => res.json(err));
   } else {
-    console.log("no se pueden agregar canciones a una playlist de libros");
     res.json({ estado: "error al agregar cancion" });
   }
 };
@@ -64,9 +67,10 @@ exports.postAgregarLibro = async (req, res) => {
           },
         },
       }
-    ).then(res.json({ estado: "libro agregado" }));
+    )
+      .then(res.status(200).json({ estado: "libro agregado" }))
+      .catch((err) => res.json(err));
   } else {
-    console.log("no se pueden agregar libros a una playlist de canciones");
     res.json({ estado: "error al agregar libro" });
   }
 };
@@ -83,12 +87,14 @@ exports.postBorrarCancion = async (req, res) => {
             nombreCancion: req.body.nombreCancion,
             autorCancion: req.body.autorCancion,
             generoCancion: req.body.generoCancion,
+            album: req.body.album,
           },
         },
       }
-    ).then(res.json({ estado: "cancion eliminada" }));
+    )
+      .then(res.status(200).json({ estado: "cancion eliminada" }))
+      .catch((err) => res.json(err));
   } else {
-    console.log("no se pueden eliminar canciones de una playlist de libros");
     res.json({ estado: "error al eliminar cancion" });
   }
 };
@@ -109,9 +115,10 @@ exports.postBorrarLibro = async (req, res) => {
           },
         },
       }
-    ).then(res.json({ estado: "libro eliminado" }));
+    )
+      .then(res.status(200).json({ estado: "libro eliminado" }))
+      .catch((err) => res.json(err));
   } else {
-    console.log("no se pueden eliminar libros de una playlist de canciones");
     res.json({ estado: "error al eliminar libro" });
   }
 };
@@ -124,14 +131,17 @@ exports.modificarPlaylist = async (req, res) => {
         nombre: req.body.nuevoNombre,
       },
     }
-  ).then(res.json({ estado: "aceptado" }));
+  )
+    .then(res.status(200).json({ estado: "aceptado" }))
+    .catch((err) => res.json(err));
 };
 
 exports.borrarPlaylist = async (req, res) => {
   Playlists.deleteOne({
     nombre: req.body.nombre,
-  }).then(() => {
-    console.log("Playlist eliminada");
-    res.json({ estado: "aceptado" });
-  });
+  })
+    .then(() => {
+      res.status(200).json({ estado: "aceptado" });
+    })
+    .catch((err) => res.json(err));
 };
